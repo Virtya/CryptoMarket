@@ -2,14 +2,10 @@ package com.virtya.CryptoMarket.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.virtya.CryptoMarket.dto.*;
 import com.virtya.CryptoMarket.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -34,7 +30,7 @@ public class UserController {
     @GetMapping("/watch")
     public Object getWatchBalanceUser(@RequestBody String myUser) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        UserGetBalanceDto user = objectMapper.readValue(myUser, UserGetBalanceDto.class);
+        UserReplenishWalletDto user = objectMapper.readValue(myUser, UserReplenishWalletDto.class);
 
         List<Double> userBalance;
 
@@ -48,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/replenish")
-    public Object postReplenishWallet(@RequestBody UserGetBalanceDto myUser) throws JSONException {
+    public Object postReplenishWallet(@RequestBody UserReplenishWalletDto myUser) {
 
         String type;
         if (myUser.getRUB_wallet() != null) {
@@ -69,6 +65,61 @@ public class UserController {
         }
         Date date = new Date();
         return new ErrorDto("Wallet with this type does not exist.", date);
+    }
+
+    @PostMapping("/get")
+    public Object postGetMoneyFromMarket(@RequestBody UserGetMoneyMarketDto myUser) {
+
+        if (myUser.getCredit_card() != null) {
+            UserReplenishWalletRubDto userRub = new UserReplenishWalletRubDto();
+            userRub.setRUB_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
+                    myUser.getCount(), myUser.getCredit_card()).toString());
+            return userRub;
+        } else if (myUser.getWallet() != null) {
+            if (Objects.equals(myUser.getCurrency(), "TON")) {
+                UserReplenishWalletTonDto userTon = new UserReplenishWalletTonDto();
+                userTon.setTON_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
+                        myUser.getCount(), myUser.getWallet()).toString());
+                return userTon;
+            } else if (Objects.equals(myUser.getCurrency(), "BTC")){
+                UserReplenishWalletBtcDto userTon = new UserReplenishWalletBtcDto();
+                userTon.setBTC_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
+                        myUser.getCount(), myUser.getWallet()).toString());
+                return userTon;
+            }
+        }
+
+        Date date = new Date();
+        return new ErrorDto("Crypto - input wallet, money - input credit_card!", date);
+    }
+
+    @GetMapping("/rate")
+    public Object getWatchRateUser(@RequestBody UserCurrencyDto myUser) {
+        GetCurrencyDto cur = new GetCurrencyDto();
+        HashMap<String, String> hashMapRate = userService.userGetActualCourse(myUser.getSecretKey(), myUser.getCurrency());
+        switch (myUser.getCurrency()) {
+            case ("RUB") -> {
+                cur.setRUB_wallet("1");
+                cur.setTON_wallet(hashMapRate.get("TON"));
+                cur.setBTC_wallet(hashMapRate.get("BTC"));
+                return cur;
+            }
+            case ("TON") -> {
+                cur.setTON_wallet("1");
+                cur.setRUB_wallet(hashMapRate.get("RUB"));
+                cur.setBTC_wallet(hashMapRate.get("BTC"));
+                return cur;
+            }
+            case ("BTC") -> {
+                cur.setBTC_wallet("1");
+                cur.setRUB_wallet(hashMapRate.get("RUB"));
+                cur.setTON_wallet(hashMapRate.get("TON"));
+                return cur;
+            }
+        }
+
+        Date date = new Date();
+        return new ErrorDto("This type of currency does not exist.", date);
     }
 
     /*@PutMapping("/{id}")

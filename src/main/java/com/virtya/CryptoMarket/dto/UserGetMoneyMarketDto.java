@@ -1,19 +1,23 @@
 package com.virtya.CryptoMarket.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Required;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class ReplenishmentWalletDto {
+public class UserGetMoneyMarketDto {
     private String secretKey;
-
+    private String currency;
+    private String count;
+    @JsonProperty(value = "credit_card")
+    private String credit_card;
+    @JsonProperty(value = "wallet")
+    private String wallet;
 }

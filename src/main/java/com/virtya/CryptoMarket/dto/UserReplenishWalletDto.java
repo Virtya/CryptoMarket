@@ -9,7 +9,7 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class UserGetBalanceDto {
+public class UserReplenishWalletDto {
     private String secretKey;
 
     @JsonProperty(value = "RUB_wallet")

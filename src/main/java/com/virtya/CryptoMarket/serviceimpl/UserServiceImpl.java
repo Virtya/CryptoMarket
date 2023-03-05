@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     public Double userReplenishmentWallet(String secret_key, String type, String money) {
         double value = 0.0;
 
-            Double myMoney = Double.parseDouble(money);
+        Double myMoney = Double.parseDouble(money);
 
         OurUser user = userRepository.findBySecretKey(secret_key)
                 .orElseThrow(()->new ResourceNotFoundException(
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HashMap<String, Double> userGetActualCourse(String secret_key, String currency) {
+    public HashMap<String, String> userGetActualCourse(String secret_key, String currency) {
         Currency btcCur = currencyRepository.findByName("BTC");
         Currency tonCur = currencyRepository.findByName("TON");
         Currency rubCur = currencyRepository.findByName("RUB");
@@ -146,20 +146,20 @@ public class UserServiceImpl implements UserService {
                         "The user with secret key = " + secret_key + " does not exist."));
 
 
-        HashMap<String, Double> actualCur = new HashMap<>();
+        HashMap<String, String> actualCur = new HashMap<>();
 
         switch (currency) {
             case ("BTC") -> {
-                actualCur.put("TON", btcCur.getRate() / tonCur.getRate());
-                actualCur.put("RUB", btcCur.getRate() / rubCur.getRate());
+                actualCur.put("TON", String.valueOf(btcCur.getRate() / tonCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(btcCur.getRate() / rubCur.getRate()));
             }
             case ("TON") -> {
-                actualCur.put("BTC", tonCur.getRate() / btcCur.getRate());
-                actualCur.put("RUB", tonCur.getRate() / rubCur.getRate());
+                actualCur.put("BTC",  String.valueOf(tonCur.getRate() / btcCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(tonCur.getRate() / rubCur.getRate()));
             }
             case ("RUB") -> {
-                actualCur.put("BTC", rubCur.getRate() / btcCur.getRate());
-                actualCur.put("TON", rubCur.getRate() / tonCur.getRate());
+                actualCur.put("BTC",  String.valueOf(rubCur.getRate() / btcCur.getRate()));
+                actualCur.put("TON",  String.valueOf(rubCur.getRate() / tonCur.getRate()));
             }
         }
 
