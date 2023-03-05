@@ -1,4 +1,4 @@
-package com.virtya.CryptoMarket.dto;
+package com.virtya.CryptoMarket.dto.forexchangemoney;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

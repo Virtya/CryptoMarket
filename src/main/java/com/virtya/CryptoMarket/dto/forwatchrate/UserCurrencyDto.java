@@ -1,4 +1,4 @@
-package com.virtya.CryptoMarket.dto;
+package com.virtya.CryptoMarket.dto.forwatchrate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,10 +11,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class AlreadyExchangedValueDto {
-    private String currency_from;
-    private String currency_to;
-    private String amount_from;
-    private String amount_to;
-
+public class UserCurrencyDto {
+    private String secretKey;
+    private String currency;
 }

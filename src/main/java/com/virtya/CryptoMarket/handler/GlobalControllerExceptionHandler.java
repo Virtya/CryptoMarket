@@ -1,7 +1,7 @@
 package com.virtya.CryptoMarket.handler;
 
 
-import com.virtya.CryptoMarket.dto.ErrorDto;
+import com.virtya.CryptoMarket.dto.error.ErrorDto;
 import com.virtya.CryptoMarket.exception.ResourceAlreadyExistsException;
 import com.virtya.CryptoMarket.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;

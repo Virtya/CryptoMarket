@@ -1,4 +1,4 @@
-package com.virtya.CryptoMarket.dto;
+package com.virtya.CryptoMarket.dto.forreplenishwallet;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class UserReplenishWalletBtcDto {
-    private String BTC_wallet;
+public class UserReplenishWalletRubDto {
+    private String RUB_wallet;
 }

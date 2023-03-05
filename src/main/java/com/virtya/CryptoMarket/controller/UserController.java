@@ -1,9 +1,19 @@
 package com.virtya.CryptoMarket.controller;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.virtya.CryptoMarket.dto.*;
+import com.virtya.CryptoMarket.dto.error.ErrorDto;
+import com.virtya.CryptoMarket.dto.forexchangemoney.AlreadyExchangedValueDto;
+import com.virtya.CryptoMarket.dto.forexchangemoney.ExchangeValueDto;
+import com.virtya.CryptoMarket.dto.forgetmoney.UserGetMoneyMarketDto;
+import com.virtya.CryptoMarket.dto.forregister.UserDto;
+import com.virtya.CryptoMarket.dto.forregister.UserRegistrateDto;
+import com.virtya.CryptoMarket.dto.forreplenishwallet.UserReplenishWalletBtcDto;
+import com.virtya.CryptoMarket.dto.forreplenishwallet.UserReplenishWalletDto;
+import com.virtya.CryptoMarket.dto.forreplenishwallet.UserReplenishWalletRubDto;
+import com.virtya.CryptoMarket.dto.forreplenishwallet.UserReplenishWalletTonDto;
+import com.virtya.CryptoMarket.dto.forwatchbalance.WalletDto;
+import com.virtya.CryptoMarket.dto.forwatchrate.GetCurrencyDto;
+import com.virtya.CryptoMarket.dto.forwatchrate.UserCurrencyDto;
 import com.virtya.CryptoMarket.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,22 +29,20 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/registrate")
-    public Object postRegistrationUser(@RequestBody String myUser) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserRegistrateDto user = objectMapper.readValue(myUser, UserRegistrateDto.class);
+    public Object postRegistrationUser(@RequestBody UserRegistrateDto myUser) {
         UserDto usr = new UserDto();
-        usr.setSecretKey(userService.userRegistrate(user.getUsername(), user.getEmail()));
+
+        usr.setSecretKey(userService.userRegistrate(myUser.getUsername(), myUser.getEmail()));
+
         return usr;
     }
 
     @GetMapping("/watch")
-    public Object getWatchBalanceUser(@RequestBody String myUser) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        UserReplenishWalletDto user = objectMapper.readValue(myUser, UserReplenishWalletDto.class);
-
+    public Object getWatchBalanceUser(@RequestBody UserDto myUser) {
         List<Double> userBalance;
 
-        userBalance = userService.userWatchBalance(user.getSecretKey());
+        userBalance = userService.userWatchBalance(myUser.getSecretKey());
+
         WalletDto wallet = new WalletDto();
         wallet.setRUB_wallet(userBalance.get(0).toString());
         wallet.setTON_wallet(userBalance.get(1).toString());
@@ -45,8 +53,8 @@ public class UserController {
 
     @PostMapping("/replenish")
     public Object postReplenishWallet(@RequestBody UserReplenishWalletDto myUser) {
-
         String type;
+
         if (myUser.getRUB_wallet() != null) {
             type = "RUB";
             UserReplenishWalletRubDto userRub = new UserReplenishWalletRubDto();
@@ -63,6 +71,7 @@ public class UserController {
             userBtc.setBTC_wallet(userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getBTC_wallet()).toString());
             return userBtc;
         }
+
         Date date = new Date();
         return new ErrorDto("Wallet with this type does not exist.", date);
     }
@@ -71,21 +80,28 @@ public class UserController {
     public Object postGetMoneyFromMarket(@RequestBody UserGetMoneyMarketDto myUser) {
 
         if (myUser.getCredit_card() != null) {
+
             UserReplenishWalletRubDto userRub = new UserReplenishWalletRubDto();
             userRub.setRUB_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
                     myUser.getCount(), myUser.getCredit_card()).toString());
             return userRub;
+
         } else if (myUser.getWallet() != null) {
+
             if (Objects.equals(myUser.getCurrency(), "TON")) {
+
                 UserReplenishWalletTonDto userTon = new UserReplenishWalletTonDto();
                 userTon.setTON_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
                         myUser.getCount(), myUser.getWallet()).toString());
                 return userTon;
+
             } else if (Objects.equals(myUser.getCurrency(), "BTC")){
+
                 UserReplenishWalletBtcDto userTon = new UserReplenishWalletBtcDto();
                 userTon.setBTC_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
                         myUser.getCount(), myUser.getWallet()).toString());
                 return userTon;
+
             }
         }
 
@@ -97,6 +113,7 @@ public class UserController {
     public Object getWatchRateUser(@RequestBody UserCurrencyDto myUser) {
         GetCurrencyDto cur = new GetCurrencyDto();
         HashMap<String, String> hashMapRate = userService.userGetActualCourse(myUser.getSecretKey(), myUser.getCurrency());
+
         switch (myUser.getCurrency()) {
             case ("RUB") -> {
                 cur.setRUB_wallet("1");
@@ -128,7 +145,9 @@ public class UserController {
 
         HashMap<String, String> exchangedValue = userService.userExchangeValue(myUser.getSecretKey(),
                 myUser.getCurrency_from(), myUser.getCurrency_to(), myUser.getAmount());
+
         AlreadyExchangedValueDto exchangedValueDto = new AlreadyExchangedValueDto();
+
         exchangedValueDto.setCurrency_from(exchangedValue.get("currency from"));
         exchangedValueDto.setCurrency_to(exchangedValue.get("currency to"));
         exchangedValueDto.setAmount_from(exchangedValue.get("amount from"));

@@ -1,4 +1,4 @@
-package com.virtya.CryptoMarket.dto;
+package com.virtya.CryptoMarket.dto.error;
 
 
 import lombok.AllArgsConstructor;
