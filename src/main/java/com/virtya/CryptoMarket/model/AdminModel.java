@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminModel {
     @JsonProperty(value = "secretKey")
-    private Long secretKey;
+    private String secretKey;
 
     @JsonProperty(value = "currencies")
     private List<Currency> currencies;

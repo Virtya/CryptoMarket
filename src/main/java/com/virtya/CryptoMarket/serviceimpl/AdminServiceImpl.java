@@ -72,11 +72,8 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.findBySecretKey(secret_key)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Admin with secret key = " + secret_key + " does not exist."));
-        if (currencyRepository.findByName(currency) == null) {
-                throw new ResourceNotFoundException(
-                    "The currency with name = " + currency + " does not exist.");
-        }
-        while (names.listIterator().hasNext()) {
+
+        while (i < 2) {
             Currency cur = currencyRepository.findByName(names.get(i));
                     if (cur == null) {
                         throw new ResourceNotFoundException("The currency does not exist.");

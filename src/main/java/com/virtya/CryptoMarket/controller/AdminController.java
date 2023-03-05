@@ -1,51 +1,111 @@
-/*
 package com.virtya.CryptoMarket.controller;
 
 
-import com.virtya.CryptoMarket.entity.Transaction;
-import com.virtya.CryptoMarket.model.CurrencyModel;
-import com.virtya.CryptoMarket.service.UserService;
+import com.virtya.CryptoMarket.dto.ChangeRateAdminDto;
+import com.virtya.CryptoMarket.dto.ChangedRateAdminDto;
+import com.virtya.CryptoMarket.dto.forwatchrate.AdminCurrencyDto;
+import com.virtya.CryptoMarket.dto.error.ErrorDto;
+import com.virtya.CryptoMarket.dto.forexchangemoney.AlreadyExchangedValueDto;
+import com.virtya.CryptoMarket.dto.forexchangemoney.ExchangeValueDto;
+import com.virtya.CryptoMarket.dto.forwatchrate.GetCurrencyDto;
+import com.virtya.CryptoMarket.service.AdminService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
-@Controller
+
+@RestController
 @AllArgsConstructor
-@RequestMapping("/director")
-public class DirectorController {
+@RequestMapping(value = "/admin", produces =  "application/json")
+public class AdminController {
 
-    private final UserService directorService;
+    private final AdminService adminService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getDirectorById(@PathVariable Long id) {
-        return new ResponseEntity<>(directorService.getDirectorById(id), HttpStatus.OK);
+    @GetMapping("/rate")
+    public Object getWatchRateUser(@RequestBody AdminCurrencyDto myAdmin) {
+        GetCurrencyDto cur = new GetCurrencyDto();
+        HashMap<String, String> hashMapRate = adminService.adminGetActualCourse(myAdmin.getSecretKey(), myAdmin.getCurrency());
+
+        switch (myAdmin.getCurrency()) {
+            case ("RUB") -> {
+                cur.setRUB_wallet("1");
+                cur.setTON_wallet(hashMapRate.get("TON"));
+                cur.setBTC_wallet(hashMapRate.get("BTC"));
+                return cur;
+            }
+            case ("TON") -> {
+                cur.setTON_wallet("1");
+                cur.setRUB_wallet(hashMapRate.get("RUB"));
+                cur.setBTC_wallet(hashMapRate.get("BTC"));
+                return cur;
+            }
+            case ("BTC") -> {
+                cur.setBTC_wallet("1");
+                cur.setRUB_wallet(hashMapRate.get("RUB"));
+                cur.setTON_wallet(hashMapRate.get("TON"));
+                return cur;
+            }
+        }
+
+        Date date = new Date();
+        return new ErrorDto("This type of currency does not exist.", date);
     }
 
-    @GetMapping
-    public ResponseEntity<Iterable<Transaction>> getDirector(){
-        return new ResponseEntity<>(directorService.getDirector(), HttpStatus.OK);
+    @PostMapping("/change")
+    public Object postChangeRate(@RequestBody ChangeRateAdminDto myAdmin) {
+
+        List<String> currencies = new ArrayList<>();
+        List<String> currenciesValue = new ArrayList<>();
+
+        HashMap<String, String> currenciesRes;
+        ChangedRateAdminDto changedRate = new ChangedRateAdminDto();
+
+        switch (myAdmin.getBase_currency()) {
+            case ("RUB") -> {
+                currencies.add("TON");
+                currencies.add("BTC");
+                currenciesValue.add(myAdmin.getTON());
+                currenciesValue.add(myAdmin.getBTC());
+                currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),
+                        myAdmin.getBase_currency(), currencies, currenciesValue);
+                changedRate.setTON(currenciesRes.get("TON"));
+                changedRate.setBTC(currenciesRes.get("BTC"));
+                changedRate.setRUB("not changed");
+                return changedRate;
+            }
+            case ("TON") -> {
+                currencies.add("RUB");
+                currencies.add("BTC");
+                currenciesValue.add(myAdmin.getRUB());
+                currenciesValue.add(myAdmin.getBTC());
+                currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),
+                        myAdmin.getBase_currency(), currencies, currenciesValue);
+                changedRate.setRUB(currenciesRes.get("RUB"));
+                changedRate.setBTC(currenciesRes.get("BTC"));
+                changedRate.setTON("not changed");
+                return changedRate;
+            }
+            case ("BTC") -> {
+                currencies.add("RUB");
+                currencies.add("TON");
+                currenciesValue.add(myAdmin.getRUB());
+                currenciesValue.add(myAdmin.getTON());
+                currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),
+                        myAdmin.getBase_currency(), currencies, currenciesValue);
+                changedRate.setRUB(currenciesRes.get("RUB"));
+                changedRate.setTON(currenciesRes.get("TON"));
+                changedRate.setBTC("not changed");
+                return changedRate;
+            }
+        }
+
+        Date date = new Date();
+        return new ErrorDto("This type of currency does not exist.", date);
     }
 
-    @PostMapping
-    public ResponseEntity<Transaction> addDirector(@RequestBody CurrencyModel directorModel)
-    {
-        return new ResponseEntity<>(directorService.addDirector(directorModel), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Transaction> updateDirector(@PathVariable Long id, @RequestBody CurrencyModel directorModel)
-    {
-        return new ResponseEntity<>(directorService.updateDirector(id, directorModel), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteById(@PathVariable Long id)
-    {
-        directorService.deleteById(id);
-    }
 }
-*/

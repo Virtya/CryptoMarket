@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface AdminRepository extends JpaRepository<Admin, Long> {
     boolean existsBySecretKey(String secretKey);
 
-    @Query("select a from Admin a where ?1 = a.secretKey")
     Optional<Admin> findBySecretKey(String secretKey);
 
     @Query("select case when ?1 = 'RUB' then sum(u.RUB_balance) " +
