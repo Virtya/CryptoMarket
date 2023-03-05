@@ -122,16 +122,18 @@ public class UserController {
         return new ErrorDto("This type of currency does not exist.", date);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Currency> updateCountry(@PathVariable Long id, @RequestBody AdminModel countryModel)
-    {
-        return new ResponseEntity<>(countryService.updateCountry(id, countryModel), HttpStatus.OK);
-    }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public void deleteById(@PathVariable Long id)
-    {
-        countryService.deleteById(id);
-    }*/
+    @PostMapping("/exchange")
+    public Object postExchangeMoney(@RequestBody ExchangeValueDto myUser) {
+
+        HashMap<String, String> exchangedValue = userService.userExchangeValue(myUser.getSecretKey(),
+                myUser.getCurrency_from(), myUser.getCurrency_to(), myUser.getAmount());
+        AlreadyExchangedValueDto exchangedValueDto = new AlreadyExchangedValueDto();
+        exchangedValueDto.setCurrency_from(exchangedValue.get("currency from"));
+        exchangedValueDto.setCurrency_to(exchangedValue.get("currency to"));
+        exchangedValueDto.setAmount_from(exchangedValue.get("amount from"));
+        exchangedValueDto.setAmount_to(exchangedValue.get("amount to"));
+
+        return exchangedValueDto;
+    }
 }

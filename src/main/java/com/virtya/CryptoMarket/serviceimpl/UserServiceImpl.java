@@ -150,16 +150,16 @@ public class UserServiceImpl implements UserService {
 
         switch (currency) {
             case ("BTC") -> {
-                actualCur.put("TON", String.valueOf(btcCur.getRate() / tonCur.getRate()));
-                actualCur.put("RUB",  String.valueOf(btcCur.getRate() / rubCur.getRate()));
+                actualCur.put("TON", String.valueOf(1 / btcCur.getRate() * tonCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(1 / btcCur.getRate() * rubCur.getRate()));
             }
             case ("TON") -> {
-                actualCur.put("BTC",  String.valueOf(tonCur.getRate() / btcCur.getRate()));
-                actualCur.put("RUB",  String.valueOf(tonCur.getRate() / rubCur.getRate()));
+                actualCur.put("BTC",  String.valueOf(1 / tonCur.getRate() * btcCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(1 / tonCur.getRate() * rubCur.getRate()));
             }
             case ("RUB") -> {
-                actualCur.put("BTC",  String.valueOf(rubCur.getRate() / btcCur.getRate()));
-                actualCur.put("TON",  String.valueOf(rubCur.getRate() / tonCur.getRate()));
+                actualCur.put("BTC",  String.valueOf(1 / rubCur.getRate() * btcCur.getRate()));
+                actualCur.put("TON",  String.valueOf(1 / rubCur.getRate() * tonCur.getRate()));
             }
         }
 
@@ -189,7 +189,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public HashMap<String, String> userExchangeValue(String secret_key, String currencyFrom,
-                                                     String currencyTo, Double amount) {
+                                                     String currencyTo, String amount) {
         OurUser user = userRepository.findBySecretKey(secret_key)
                 .orElseThrow(()->new ResourceNotFoundException(
                         "The user with secret key = "+ secret_key +" does not exist."));
@@ -206,14 +206,15 @@ public class UserServiceImpl implements UserService {
         double valueStart = getValueFromCur(user, currencyFrom);
         double valueEnd = getValueFromCur(user, currencyTo);
 
+        Double myAmount = Double.parseDouble(amount);
 
-        if (valueStart < amount) {
+        if (valueStart < myAmount) {
             throw new ResourceNotFoundException("You have less money, than you want to get HAHAHAH.");
         }
 
-        Double exchangedValue = curFrom.getRate() * curTo.getRate();
-        valueStart -= amount;
-        valueEnd += amount / exchangedValue;
+        Double exchangedValue = 1 / curFrom.getRate() * curTo.getRate();
+        valueStart -= myAmount;
+        valueEnd += myAmount / exchangedValue;
 
         setValueFromCur(user, currencyFrom, valueStart);
         setValueFromCur(user, currencyTo, valueEnd);
@@ -224,10 +225,10 @@ public class UserServiceImpl implements UserService {
         transactionRepository.save(transaction);
 
         HashMap<String, String> outInfo = new HashMap<>();
-        outInfo.put("currency from: ", currencyFrom);
-        outInfo.put("currency to: ", currencyTo);
-        outInfo.put("amount from: ", amount.toString());
-        outInfo.put("amount to: ", exchangedValue.toString());
+        outInfo.put("currency from", currencyFrom);
+        outInfo.put("currency to", currencyTo);
+        outInfo.put("amount from", amount);
+        outInfo.put("amount to", exchangedValue.toString());
         return outInfo;
     }
 }
