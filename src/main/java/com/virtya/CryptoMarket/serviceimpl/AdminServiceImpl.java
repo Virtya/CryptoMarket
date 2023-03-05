@@ -25,14 +25,7 @@ public class AdminServiceImpl implements AdminService {
     final List<String> currencies = Arrays.asList("RUB", "TON", "BTC");
 
     @Override
-    public HashMap<String, Double> adminGetActualCourse(String secret_key, String currency) {
-        /*Currency tonCur =  Currency.builder().name("TON").rate(0.005556).build();
-        Currency rubCur =  Currency.builder().name("RUB").rate((double) 1).build();
-        Currency btcCur = Currency.builder().name("BTC").rate(0.000095).build();
-
-        currencyRepository.save(btcCur);
-        currencyRepository.save(tonCur);
-        currencyRepository.save(rubCur);*/
+    public HashMap<String, String> adminGetActualCourse(String secret_key, String currency) {
 
         adminRepository.findBySecretKey(secret_key)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -41,24 +34,26 @@ public class AdminServiceImpl implements AdminService {
                 throw new ResourceNotFoundException(
                     "The currency with name = " + currency + " does not exist.");
         }
+
         Currency btcCur = currencyRepository.findByName("BTC");
         Currency tonCur = currencyRepository.findByName("TON");
         Currency rubCur = currencyRepository.findByName("RUB");
 
 
-        HashMap<String, Double> actualCur = new HashMap<>();
+        HashMap<String, String> actualCur = new HashMap<>();
+
         switch (currency) {
             case ("BTC") -> {
-                actualCur.put("TON", btcCur.getRate() / tonCur.getRate());
-                actualCur.put("RUB", btcCur.getRate() / rubCur.getRate());
+                actualCur.put("TON", String.valueOf(1 / btcCur.getRate() * tonCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(1 / btcCur.getRate() * rubCur.getRate()));
             }
             case ("TON") -> {
-                actualCur.put("BTC", tonCur.getRate() / btcCur.getRate());
-                actualCur.put("RUB", tonCur.getRate() / rubCur.getRate());
+                actualCur.put("BTC",  String.valueOf(1 / tonCur.getRate() * btcCur.getRate()));
+                actualCur.put("RUB",  String.valueOf(1 / tonCur.getRate() * rubCur.getRate()));
             }
             case ("RUB") -> {
-                actualCur.put("BTC", rubCur.getRate() / btcCur.getRate());
-                actualCur.put("TON", rubCur.getRate() / tonCur.getRate());
+                actualCur.put("BTC",  String.valueOf(1 / rubCur.getRate() * btcCur.getRate()));
+                actualCur.put("TON",  String.valueOf(1 / rubCur.getRate() * tonCur.getRate()));
             }
         }
 
@@ -69,10 +64,10 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public HashMap<String, Double> adminChangeActualCourse(String secret_key, String currency, List<String> names,
-                                                           List<Double> values) {
+    public HashMap<String, String> adminChangeActualCourse(String secret_key, String currency, List<String> names,
+                                                           List<String> values) {
         int i = 0;
-        HashMap<String, Double> actualRate = new HashMap<>();
+        HashMap<String, String> actualRate = new HashMap<>();
 
         adminRepository.findBySecretKey(secret_key)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -86,10 +81,10 @@ public class AdminServiceImpl implements AdminService {
                     if (cur == null) {
                         throw new ResourceNotFoundException("The currency does not exist.");
                     }
-            cur.setRate(values.get(i));
+            cur.setRate(Double.parseDouble(values.get(i)));
             currencyRepository.save(cur);
 
-            actualRate.put(cur.getName(), cur.getRate());
+            actualRate.put(cur.getName(), cur.getRate().toString());
             i++;
         }
 
@@ -100,22 +95,24 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Double adminGetSumForVal(String secret_key, String cur) {
+    public String adminGetSumForVal(String secret_key, String cur) {
         adminRepository.findBySecretKey(secret_key)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Admin with secret key = " + secret_key + " does not exist."));
+
         if (!currencies.contains(cur)) {
             throw new ResourceNotFoundException("The currency does not exist.");
         }
-        return adminRepository.getSumFromAllUsers(cur);
+
+        return adminRepository.getSumFromAllUsers(cur).toString();
     }
 
     @Override
-    public int adminGetCountTransactions(String secret_key, String dateFrom, String dateTo) throws ParseException {
+    public String adminGetCountTransactions(String secret_key, String dateFrom, String dateTo) throws ParseException {
         DateFormat format = new SimpleDateFormat("d.M.yyyy", Locale.ENGLISH);
         Date dateFr = format.parse(dateFrom);
         Date dateT = format.parse(dateTo);
 
-        return adminRepository.countAmountOfTransact(dateFr, dateT);
+        return Integer.toString(adminRepository.countAmountOfTransact(dateFr, dateT));
     }
 }
