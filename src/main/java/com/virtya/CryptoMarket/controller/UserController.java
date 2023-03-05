@@ -48,20 +48,27 @@ public class UserController {
     }
 
     @PostMapping("/replenish")
-    public Object postReplenishWallet(@RequestBody UserGetBalanceDto myUser) throws JsonProcessingException, JSONException {
+    public Object postReplenishWallet(@RequestBody UserGetBalanceDto myUser) throws JSONException {
 
         String type;
         if (myUser.getRUB_wallet() != null) {
             type = "RUB";
-            return "RUB_wallet: " + userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getRUB_wallet());
+            UserReplenishWalletRubDto userRub = new UserReplenishWalletRubDto();
+            userRub.setRUB_wallet(userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getRUB_wallet()).toString());
+            return userRub;
         } else if (myUser.getTON_wallet() != null) {
             type = "TON";
-            return "TON_wallet: "  + userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getTON_wallet());
+            UserReplenishWalletTonDto userTon = new UserReplenishWalletTonDto();
+            userTon.setTON_wallet(userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getTON_wallet()).toString());
+            return userTon;
         } else if (myUser.getBTC_wallet() != null){
             type = "BTC";
-            return "BTC_wallet: " + userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getBTC_wallet());
+            UserReplenishWalletBtcDto userBtc = new UserReplenishWalletBtcDto();
+            userBtc.setBTC_wallet(userService.userReplenishmentWallet(myUser.getSecretKey(), type, myUser.getBTC_wallet()).toString());
+            return userBtc;
         }
-        return "Wallet with this type does not exist.";
+        Date date = new Date();
+        return new ErrorDto("Wallet with this type does not exist.", date);
     }
 
     /*@PutMapping("/{id}")
