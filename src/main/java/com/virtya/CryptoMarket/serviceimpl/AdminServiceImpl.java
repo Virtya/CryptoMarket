@@ -97,10 +97,6 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Admin with secret key = " + secret_key + " does not exist."));
 
-        if (!currencies.contains(cur)) {
-            throw new ResourceNotFoundException("The currency does not exist.");
-        }
-
         return adminRepository.getSumFromAllUsers(cur).toString();
     }
 

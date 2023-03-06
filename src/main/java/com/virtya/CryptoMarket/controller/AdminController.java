@@ -1,18 +1,22 @@
 package com.virtya.CryptoMarket.controller;
 
 
-import com.virtya.CryptoMarket.dto.ChangeRateAdminDto;
-import com.virtya.CryptoMarket.dto.ChangedRateAdminDto;
+import com.virtya.CryptoMarket.dto.forchangerate.ChangeRateAdminDto;
+import com.virtya.CryptoMarket.dto.forchangerate.ChangedRateAdminDto;
+import com.virtya.CryptoMarket.dto.forgetusersbalance.AdminUsersBalanceDto;
+import com.virtya.CryptoMarket.dto.forgetusersbalance.UsersBalanceSumBtcDto;
+import com.virtya.CryptoMarket.dto.forgetusersbalance.UsersBalanceSumRubDto;
+import com.virtya.CryptoMarket.dto.forgetusersbalance.UsersBalanceSumTonDto;
+import com.virtya.CryptoMarket.dto.fortransaction.AdminCheckTransactionsDto;
+import com.virtya.CryptoMarket.dto.fortransaction.TransactionCountDto;
 import com.virtya.CryptoMarket.dto.forwatchrate.AdminCurrencyDto;
 import com.virtya.CryptoMarket.dto.error.ErrorDto;
-import com.virtya.CryptoMarket.dto.forexchangemoney.AlreadyExchangedValueDto;
-import com.virtya.CryptoMarket.dto.forexchangemoney.ExchangeValueDto;
 import com.virtya.CryptoMarket.dto.forwatchrate.GetCurrencyDto;
 import com.virtya.CryptoMarket.service.AdminService;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,7 +31,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/rate")
-    public Object getWatchRateUser(@RequestBody AdminCurrencyDto myAdmin) {
+    public Object getWatchRateAdmin(@RequestBody AdminCurrencyDto myAdmin) {
         GetCurrencyDto cur = new GetCurrencyDto();
         HashMap<String, String> hashMapRate = adminService.adminGetActualCourse(myAdmin.getSecretKey(), myAdmin.getCurrency());
 
@@ -106,6 +110,47 @@ public class AdminController {
 
         Date date = new Date();
         return new ErrorDto("This type of currency does not exist.", date);
+    }
+
+    @GetMapping("/balance")
+    public Object getUsersBalance(@RequestBody AdminUsersBalanceDto myAdmin) {
+
+        String sumUser = adminService.adminGetSumForVal(myAdmin.getSecretKey(), myAdmin.getCurrency());
+
+        switch (myAdmin.getCurrency()) {
+            case ("RUB") -> {
+                UsersBalanceSumRubDto cur = new UsersBalanceSumRubDto();
+                cur.setRUB(sumUser);
+                return cur;
+            }
+            case ("TON") -> {
+                UsersBalanceSumTonDto cur = new UsersBalanceSumTonDto();
+                cur.setTON(sumUser);
+                return cur;
+            }
+            case ("BTC") -> {
+                UsersBalanceSumBtcDto cur = new UsersBalanceSumBtcDto();
+                cur.setBTC(sumUser);
+                return cur;
+            }
+        }
+
+        Date date = new Date();
+        return new ErrorDto("This type of currency does not exist.", date);
+    }
+
+    @GetMapping("/transaction")
+    public Object getTransactionsCount(@RequestBody AdminCheckTransactionsDto myAdmin) {
+        try {
+            String transactionCount = adminService.adminGetCountTransactions(myAdmin.getSecretKey(), myAdmin.getDate_from(), myAdmin.getDate_to());
+            TransactionCountDto trCnt = new TransactionCountDto();
+
+            trCnt.setTransaction_count(transactionCount);
+
+            return trCnt;
+        } catch (ParseException e) {
+            return e.getMessage();
+        }
     }
 
 }

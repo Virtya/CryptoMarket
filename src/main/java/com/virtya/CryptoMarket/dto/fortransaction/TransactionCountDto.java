@@ -1,4 +1,4 @@
-package com.virtya.CryptoMarket.dto;
+package com.virtya.CryptoMarket.dto.fortransaction;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,6 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class ChangedRateAdminDto {
-    private String BTC;
-    private String TON;
-    private String RUB;
+public class TransactionCountDto {
+    private String transaction_count;
 }
