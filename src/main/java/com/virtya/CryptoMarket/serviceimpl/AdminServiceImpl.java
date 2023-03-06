@@ -24,6 +24,11 @@ public class AdminServiceImpl implements AdminService {
     private final TransactionRepository transactionRepository;
     final List<String> currencies = Arrays.asList("RUB", "TON", "BTC");
 
+    public void addToCurrency(List<String> currencies, String firstCur, String secCur) {
+        currencies.add(firstCur);
+        currencies.add(secCur);
+    }
+
     @Override
     public HashMap<String, String> adminGetActualCourse(String secret_key, String currency) {
 

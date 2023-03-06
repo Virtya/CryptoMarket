@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface AdminService {
+    public void addToCurrency(List<String> currencies, String firstCur, String secCur);
     HashMap<String, String> adminGetActualCourse(String secret_key, String currency);
     HashMap<String, String> adminChangeActualCourse(String secret_key, String currency, List<String> names,
                                                     List<String> values);

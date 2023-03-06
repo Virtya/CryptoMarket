@@ -20,7 +20,4 @@ public class Admin {
 
     @NotNull
     private String secretKey;
-
-    @ManyToMany(mappedBy = "admins")
-    private List<Currency> currencies;
 }

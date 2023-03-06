@@ -29,9 +29,6 @@ public class OurUser {
     @NotNull
     private String secretKey;
 
-    @ManyToMany(mappedBy = "ourUsers")
-    private List<Currency> currencies;
-
     @NotNull
     private Double RUB_balance;
 

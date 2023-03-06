@@ -71,8 +71,7 @@ public class AdminController {
 
         switch (myAdmin.getBase_currency()) {
             case ("RUB") -> {
-                currencies.add("TON");
-                currencies.add("BTC");
+                adminService.addToCurrency(currencies, "TON","BTC");
                 currenciesValue.add(myAdmin.getTON());
                 currenciesValue.add(myAdmin.getBTC());
                 currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),
@@ -83,8 +82,7 @@ public class AdminController {
                 return changedRate;
             }
             case ("TON") -> {
-                currencies.add("RUB");
-                currencies.add("BTC");
+                adminService.addToCurrency(currencies, "RUB","BTC");
                 currenciesValue.add(myAdmin.getRUB());
                 currenciesValue.add(myAdmin.getBTC());
                 currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),
@@ -95,8 +93,7 @@ public class AdminController {
                 return changedRate;
             }
             case ("BTC") -> {
-                currencies.add("RUB");
-                currencies.add("TON");
+                adminService.addToCurrency(currencies, "RUB","TON");
                 currenciesValue.add(myAdmin.getRUB());
                 currenciesValue.add(myAdmin.getTON());
                 currenciesRes = adminService.adminChangeActualCourse(myAdmin.getSecretKey(),

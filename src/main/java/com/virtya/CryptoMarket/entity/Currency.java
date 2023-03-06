@@ -24,16 +24,4 @@ public class Currency {
 
     @NotNull
     private Double rate;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "oruUser_currency",
-            joinColumns = @JoinColumn(name = "id_ourUser"),
-            inverseJoinColumns = @JoinColumn(name = "id_currency"))
-    private List<OurUser> ourUsers;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "admin_currency",
-            joinColumns = @JoinColumn(name = "id_admin"),
-            inverseJoinColumns = @JoinColumn(name = "id_currency"))
-    private List<Admin> admins;
 }

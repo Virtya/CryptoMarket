@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
         OurUser user = OurUser.builder().username(username).email(email)
                 .secretKey(myHash).RUB_balance((double) 0).TON_balance((double) 0).BTC_balance((double) 0).build();
 
-
         Transaction transaction = Transaction.builder().date(new Date()).build();
         transactionRepository.save(transaction);
 
@@ -169,42 +168,32 @@ public class UserServiceImpl implements UserService {
         return actualCur;
     }
 
-    private double getValueFromCur(OurUser user, String cur) {
-        Double value = 0.0;
-        switch (cur) {
-            case ("RUB") -> value = user.getRUB_balance();
-            case ("TON") -> value = user.getTON_balance();
-            case ("BTC") -> value = user.getBTC_balance();
-        }
-        return value;
-    }
-
-    private void setValueFromCur(OurUser user, String cur, double value) {
-        switch (cur) {
-            case ("RUB") -> user.setRUB_balance(value);
-            case ("TON") -> user.setTON_balance(value);
-            case ("BTC") -> user.setBTC_balance(value);
-        }
-    }
-
     @Override
     public HashMap<String, String> userExchangeValue(String secret_key, String currencyFrom,
                                                      String currencyTo, String amount) {
+
         OurUser user = userRepository.findBySecretKey(secret_key)
                 .orElseThrow(()->new ResourceNotFoundException(
                         "The user with secret key = "+ secret_key +" does not exist."));
+
         Currency curFrom = currencyRepository.findByName(currencyFrom);
-               if (curFrom == null) {
-                   throw new ResourceNotFoundException(
-                        "The currency with name = "+ currencyFrom +" does not exist.");
-               }
+        if (curFrom == null) {
+            throw new ResourceNotFoundException(
+                    "The currency with name = "+ currencyFrom +" does not exist.");
+        }
+
         Currency curTo = currencyRepository.findByName(currencyTo);
         if (curTo == null) {
             throw new ResourceNotFoundException(
                     "The currency with name = "+ currencyTo +" does not exist.");
         }
-        double valueStart = getValueFromCur(user, currencyFrom);
-        double valueEnd = getValueFromCur(user, currencyTo);
+
+        Double valueStart = 0.0;
+        switch (currencyFrom) {
+            case ("RUB") -> valueStart = user.getRUB_balance();
+            case ("TON") -> valueStart = user.getTON_balance();
+            case ("BTC") -> valueStart = user.getBTC_balance();
+        };
 
         Double myAmount = Double.parseDouble(amount);
 
@@ -213,11 +202,18 @@ public class UserServiceImpl implements UserService {
         }
 
         Double exchangedValue = 1 / curFrom.getRate() * curTo.getRate();
-        valueStart -= myAmount;
-        valueEnd += myAmount / exchangedValue;
 
-        setValueFromCur(user, currencyFrom, valueStart);
-        setValueFromCur(user, currencyTo, valueEnd);
+        switch (currencyFrom) {
+            case ("RUB") -> user.setRUB_balance(user.getRUB_balance() - Double.parseDouble(amount));
+            case ("TON") -> user.setTON_balance(user.getTON_balance() - Double.parseDouble(amount));
+            case ("BTC") -> user.setBTC_balance(user.getBTC_balance() - Double.parseDouble(amount));
+        }
+
+        switch (currencyTo) {
+            case ("RUB") -> user.setRUB_balance(user.getRUB_balance() + exchangedValue);
+            case ("TON") -> user.setTON_balance(user.getTON_balance() + exchangedValue);
+            case ("BTC") -> user.setBTC_balance(user.getBTC_balance() + exchangedValue);
+        }
 
         userRepository.save(user);
 
