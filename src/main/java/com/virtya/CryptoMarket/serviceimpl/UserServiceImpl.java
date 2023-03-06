@@ -3,6 +3,7 @@ package com.virtya.CryptoMarket.serviceimpl;
 import com.virtya.CryptoMarket.entity.Currency;
 import com.virtya.CryptoMarket.entity.Transaction;
 import com.virtya.CryptoMarket.entity.OurUser;
+import com.virtya.CryptoMarket.exception.ResourceAlreadyExistsException;
 import com.virtya.CryptoMarket.exception.ResourceNotFoundException;
 import com.virtya.CryptoMarket.exception.UnexpectedTypeException;
 import com.virtya.CryptoMarket.repository.CurrencyRepository;
@@ -29,8 +30,13 @@ public class UserServiceImpl implements UserService {
     public String userRegistrate(String username, String email) {
         String myHash = DigestUtils.md5Hex(username + email);
 
+        if (userRepository.findByUsernameOrEmail(username, email) != null) {
+            throw new ResourceAlreadyExistsException("User with current username or email already exists.");
+        }
+
         OurUser user = OurUser.builder().username(username).email(email)
                 .secretKey(myHash).RUB_balance((double) 0).TON_balance((double) 0).BTC_balance((double) 0).build();
+
 
         Transaction transaction = Transaction.builder().date(new Date()).build();
         transactionRepository.save(transaction);

@@ -16,6 +16,7 @@ import com.virtya.CryptoMarket.dto.forwatchrate.GetCurrencyDto;
 import com.virtya.CryptoMarket.dto.forwatchrate.UserCurrencyDto;
 import com.virtya.CryptoMarket.service.UserService;
 import lombok.AllArgsConstructor;
+import org.postgresql.util.PSQLException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -30,6 +31,7 @@ public class UserController {
 
     @PostMapping("/registrate")
     public Object postRegistrationUser(@RequestBody UserRegistrateDto myUser) {
+
         UserDto usr = new UserDto();
 
         usr.setSecretKey(userService.userRegistrate(myUser.getUsername(), myUser.getEmail()));

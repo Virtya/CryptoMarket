@@ -146,7 +146,8 @@ public class AdminController {
 
             return trCnt;
         } catch (ParseException e) {
-            return e.getMessage();
+            Date date = new Date();
+            return new ErrorDto(e.getMessage(), date);
         }
     }
 
