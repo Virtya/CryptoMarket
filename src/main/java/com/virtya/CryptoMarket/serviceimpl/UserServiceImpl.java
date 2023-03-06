@@ -37,10 +37,6 @@ public class UserServiceImpl implements UserService {
         OurUser user = OurUser.builder().username(username).email(email)
                 .secretKey(myHash).RUB_balance((double) 0).TON_balance((double) 0).BTC_balance((double) 0).build();
 
-
-        Transaction transaction = Transaction.builder().date(new Date()).build();
-        transactionRepository.save(transaction);
-
         userRepository.save(user);
         return myHash;
     }
@@ -50,9 +46,6 @@ public class UserServiceImpl implements UserService {
         OurUser user = userRepository.findBySecretKey(secret_key)
                 .orElseThrow(()->new ResourceNotFoundException(
                         "The user with secret key = "+ secret_key +" does not exist."));
-
-        Transaction transaction = Transaction.builder().date(new Date()).build();
-        transactionRepository.save(transaction);
 
         ArrayList<Double> usersBalances = new ArrayList<>();
         usersBalances.add(user.getRUB_balance());
@@ -92,6 +85,7 @@ public class UserServiceImpl implements UserService {
 
         Transaction transaction = Transaction.builder().date(new Date()).build();
         transactionRepository.save(transaction);
+
         userRepository.save(user);
 
         return value;
@@ -167,9 +161,6 @@ public class UserServiceImpl implements UserService {
                 actualCur.put("TON",  String.valueOf(1 / rubCur.getRate() * tonCur.getRate()));
             }
         }
-
-        Transaction transaction = Transaction.builder().date(new Date()).build();
-        transactionRepository.save(transaction);
 
         return actualCur;
     }

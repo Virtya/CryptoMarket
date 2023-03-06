@@ -63,9 +63,6 @@ public class AdminServiceImpl implements AdminService {
             }
         }
 
-        Transaction transaction = Transaction.builder().date(new Date()).build();
-        transactionRepository.save(transaction);
-
         return actualCur;
     }
 
