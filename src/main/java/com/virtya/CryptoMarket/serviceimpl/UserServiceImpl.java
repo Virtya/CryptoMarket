@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
     private final TransactionRepository transactionRepository;
     final List<String> currencies = Arrays.asList("RUB", "TON", "BTC");
 
+    // Регистрация
     @Override
-    @Transactional
     public String userRegistrate(String username, String email) {
         String myHash = DigestUtils.md5Hex(username + email);
 
@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
         return myHash;
     }
 
+    // Просмотр баланса
     @Override
     public ArrayList<Double> userWatchBalance(String secret_key) {
         OurUser user = userRepository.findBySecretKey(secret_key)
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
         return usersBalances;
     }
 
+    // Пополнение кошелька
     @Override
     public Double userReplenishmentWallet(String secret_key, String type, String money) {
         double value;
@@ -91,6 +93,7 @@ public class UserServiceImpl implements UserService {
         return value;
     }
 
+    // Вывод средств
     @Override
     public Double userGetMoneyFromMarket(String secret_key, String currency, String money, String cardOrWallet) {
 
@@ -134,6 +137,7 @@ public class UserServiceImpl implements UserService {
         return value;
     }
 
+    // Получение текущего курса валют
     @Override
     public HashMap<String, String> userGetActualCourse(String secret_key, String currency) {
         Currency btcCur = currencyRepository.findByName("BTC");
@@ -165,6 +169,7 @@ public class UserServiceImpl implements UserService {
         return actualCur;
     }
 
+    // Обмен валютой
     @Override
     public HashMap<String, String> userExchangeValue(String secret_key, String currencyFrom,
                                                      String currencyTo, String amount) {

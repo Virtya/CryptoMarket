@@ -29,6 +29,7 @@ public class AdminServiceImpl implements AdminService {
         currencies.add(secCur);
     }
 
+    // Просмотр курса валют
     @Override
     public HashMap<String, String> adminGetActualCourse(String secret_key, String currency) {
 
@@ -66,6 +67,7 @@ public class AdminServiceImpl implements AdminService {
         return actualCur;
     }
 
+    // Смена курса валют
     @Override
     public HashMap<String, String> adminChangeActualCourse(String secret_key, String currency, List<String> names,
                                                            List<String> values) {
@@ -94,6 +96,7 @@ public class AdminServiceImpl implements AdminService {
         return actualRate;
     }
 
+    // Получение суммы на кошельках пользователей
     @Override
     public String adminGetSumForVal(String secret_key, String cur) {
         adminRepository.findBySecretKey(secret_key)
@@ -103,6 +106,7 @@ public class AdminServiceImpl implements AdminService {
         return adminRepository.getSumFromAllUsers(cur).toString();
     }
 
+    // Количество транзакций на бирже
     @Override
     public String adminGetCountTransactions(String secret_key, String dateFrom, String dateTo) throws ParseException {
         adminRepository.findBySecretKey(secret_key)

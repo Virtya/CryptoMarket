@@ -32,6 +32,7 @@ public class AdminController {
 
     private final AdminService adminService;
 
+    // Для просмотра курса валют админом
     @GetMapping("/rate")
     public Object getWatchRateAdmin(@RequestBody AdminCurrencyDto myAdmin) {
         GetCurrencyDto cur = new GetCurrencyDto();
@@ -58,10 +59,11 @@ public class AdminController {
             }
         }
 
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         return new ErrorDto("This type of currency does not exist.", date);
     }
 
+    // Для смены курса валют админом
     @PostMapping("/change")
     public Object postChangeRate(@RequestBody ChangeRateAdminDto myAdmin) {
 
@@ -107,10 +109,11 @@ public class AdminController {
             }
         }
 
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         return new ErrorDto("This type of currency does not exist.", date);
     }
 
+    // Подсчет баланса на кошельках пользователей
     @GetMapping("/balance")
     public Object getUsersBalance(@RequestBody AdminUsersBalanceDto myAdmin) {
 
@@ -134,10 +137,11 @@ public class AdminController {
             }
         }
 
-        Date date = new Date();
+        Date date = new Date(System.currentTimeMillis());
         return new ErrorDto("This type of currency does not exist.", date);
     }
 
+    // Для подсчета количества транзакций за определенный срок
     @GetMapping("/transaction")
     public Object getTransactionsCount(@RequestBody AdminCheckTransactionsDto myAdmin) {
         try {
@@ -148,7 +152,7 @@ public class AdminController {
 
             return trCnt;
         } catch (ParseException e) {
-            Date date = new Date();
+            Date date = new Date(System.currentTimeMillis());
             return new ErrorDto(e.getMessage(), date);
         }
     }

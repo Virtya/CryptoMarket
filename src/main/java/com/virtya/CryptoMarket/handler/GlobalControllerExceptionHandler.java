@@ -4,6 +4,7 @@ package com.virtya.CryptoMarket.handler;
 import com.virtya.CryptoMarket.dto.error.ErrorDto;
 import com.virtya.CryptoMarket.exception.ResourceAlreadyExistsException;
 import com.virtya.CryptoMarket.exception.ResourceNotFoundException;
+import com.virtya.CryptoMarket.exception.UnexpectedTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -32,6 +33,16 @@ public class GlobalControllerExceptionHandler {
 
         return new ResponseEntity<>(
                 new ErrorDto(e.getMessage(), timestamp), HttpStatus.CONFLICT
+        );
+    }
+
+    @ExceptionHandler(UnexpectedTypeException.class)
+    public @ResponseBody ResponseEntity<ErrorDto> handleUnexpectedTypeException(Exception e)
+    {
+        Date timestamp = new Date(System.currentTimeMillis());
+
+        return new ResponseEntity<>(
+                new ErrorDto(e.getMessage(), timestamp), HttpStatus.FORBIDDEN
         );
     }
 }

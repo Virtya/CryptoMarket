@@ -29,6 +29,7 @@ public class UserController {
 
     private final UserService userService;
 
+    // Регистрация пользователя
     @PostMapping("/registrate")
     public Object postRegistrationUser(@RequestBody UserRegistrateDto myUser) {
 
@@ -39,6 +40,7 @@ public class UserController {
         return usr;
     }
 
+    // Просмотр баланса кошелька пользователем
     @GetMapping("/watch")
     public Object getWatchBalanceUser(@RequestBody UserDto myUser) {
         List<Double> userBalance;
@@ -53,6 +55,7 @@ public class UserController {
         return wallet;
     }
 
+    // Для пополнения баланса кошелька пользователем деньгами из воздуха :)
     @PostMapping("/replenish")
     public Object postReplenishWallet(@RequestBody UserReplenishWalletDto myUser) {
         String type;
@@ -78,6 +81,7 @@ public class UserController {
         return new ErrorDto("Wallet with this type does not exist.", date);
     }
 
+    // Для вывода средств пользователем из кошелька на карту или в кошелек
     @PostMapping("/get")
     public Object postGetMoneyFromMarket(@RequestBody UserGetMoneyMarketDto myUser) {
 
@@ -111,6 +115,7 @@ public class UserController {
         return new ErrorDto("Crypto - input wallet, money - input credit_card!", date);
     }
 
+    // Просмотр курса валют пользователем
     @GetMapping("/rate")
     public Object getWatchRateUser(@RequestBody UserCurrencyDto myUser) {
         GetCurrencyDto cur = new GetCurrencyDto();
@@ -141,7 +146,7 @@ public class UserController {
         return new ErrorDto("This type of currency does not exist.", date);
     }
 
-
+    // Обмен валютой для пользователя
     @PostMapping("/exchange")
     public Object postExchangeMoney(@RequestBody ExchangeValueDto myUser) {
 
