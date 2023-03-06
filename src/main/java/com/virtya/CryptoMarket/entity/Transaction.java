@@ -20,12 +20,4 @@ public class Transaction {
 
     @NotNull
     private Date date;
-
-    @JoinColumn(name = "id_ourUser")
-    @ManyToOne
-    private OurUser ourUser;
-
-    @JoinColumn(name = "id_admin")
-    @ManyToOne
-    private Admin admin;
 }

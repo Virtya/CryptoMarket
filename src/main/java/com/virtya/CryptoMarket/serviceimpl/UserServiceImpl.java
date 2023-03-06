@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Double userReplenishmentWallet(String secret_key, String type, String money) {
-        double value = 0.0;
+        double value;
 
         Double myMoney = Double.parseDouble(money);
 
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("You have less money, than you want to get HAHAHAH.");
         }
 
-        Double exchangedValue = 1 / curFrom.getRate() * curTo.getRate();
+        Double exchangedValue = myAmount / curFrom.getRate() * curTo.getRate();
 
         switch (currencyFrom) {
             case ("RUB") -> user.setRUB_balance(user.getRUB_balance() - Double.parseDouble(amount));

@@ -99,10 +99,10 @@ public class UserController {
 
             } else if (Objects.equals(myUser.getCurrency(), "BTC")){
 
-                UserReplenishWalletBtcDto userTon = new UserReplenishWalletBtcDto();
-                userTon.setBTC_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
+                UserReplenishWalletBtcDto userBtc = new UserReplenishWalletBtcDto();
+                userBtc.setBTC_wallet(userService.userGetMoneyFromMarket(myUser.getSecretKey(), myUser.getCurrency(),
                         myUser.getCount(), myUser.getWallet()).toString());
-                return userTon;
+                return userBtc;
 
             }
         }

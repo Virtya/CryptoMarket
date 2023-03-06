@@ -35,6 +35,7 @@ public class AdminServiceImpl implements AdminService {
         adminRepository.findBySecretKey(secret_key)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Admin with secret key = " + secret_key + " does not exist."));
+
         if (currencyRepository.findByName(currency) == null) {
                 throw new ResourceNotFoundException(
                     "The currency with name = " + currency + " does not exist.");
@@ -107,6 +108,10 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public String adminGetCountTransactions(String secret_key, String dateFrom, String dateTo) throws ParseException {
+        adminRepository.findBySecretKey(secret_key)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Admin with secret key = " + secret_key + " does not exist."));
+
         DateFormat format = new SimpleDateFormat("d.M.yyyy", Locale.ENGLISH);
         Date dateFr = format.parse(dateFrom);
         Date dateT = format.parse(dateTo);

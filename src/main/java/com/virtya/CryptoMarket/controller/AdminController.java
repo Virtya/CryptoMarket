@@ -12,8 +12,10 @@ import com.virtya.CryptoMarket.dto.fortransaction.TransactionCountDto;
 import com.virtya.CryptoMarket.dto.forwatchrate.AdminCurrencyDto;
 import com.virtya.CryptoMarket.dto.error.ErrorDto;
 import com.virtya.CryptoMarket.dto.forwatchrate.GetCurrencyDto;
+import com.virtya.CryptoMarket.exception.ResourceNotFoundException;
 import com.virtya.CryptoMarket.service.AdminService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
